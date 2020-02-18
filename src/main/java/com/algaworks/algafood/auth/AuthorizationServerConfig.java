@@ -26,26 +26,32 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
 	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-		clients.inMemory() // Aplicação WEB frontend (Password credentials flow)
+		clients.inMemory() // Aplicação WEB frontend (Password flow)
 				.withClient("algafood-web") //
 				.secret(passwordEncoder.encode("a9d9p8.E10")) //
 				.authorizedGrantTypes("password", "refresh_token") //
-				.scopes("write", "read")
-				.accessTokenValiditySeconds(6 * 60 * 60) // 6 Horas (Padrão 12 Horas) dias * horas * minutos * segundos
+				.scopes("write", "read") //
+				.accessTokenValiditySeconds(6 * 60 * 60) // 6 Horas (Padrão 12 Horas) horas * minutos * segundos
 				.refreshTokenValiditySeconds(60 * 24 * 60 * 60) // 60 Dias (Padrão 30 Dias) dias * horas * minutos * segundos
 			
-			.and() // Aplicação de BI (Authorization code flow)
+			.and() // Aplicação de BI (Authorization code)
 				.withClient("food-analytics") //
 				.secret(passwordEncoder.encode("@food-4n4lytic$")) //
 				.authorizedGrantTypes("authorization_code") //
 				.scopes("write", "read") //
-				.redirectUris("http://food-analytics.com.br") //
+				.redirectUris("http://localhost:8082") //
 				
-			.and() // Aplicação integrador backend (Client credentials flow)
+			.and() // Aplicação integrador backend (Client credentials)
 				.withClient("app-integrador") //
 				.secret(passwordEncoder.encode("@app$-integrador")) //
 				.authorizedGrantTypes("client_credentials") //
 				.scopes("write", "read") //
+			
+			.and() // Aplicação acessa como ADMIN (Implicit Grant Type)
+				.withClient("web-admin") //
+				.authorizedGrantTypes("implicit") //
+				.scopes("write", "read") //
+				.redirectUris("http://localhost:8082") //
 				
 			.and() // Aplicação do algafood para validar tokens
 				.withClient("checktoken") //
