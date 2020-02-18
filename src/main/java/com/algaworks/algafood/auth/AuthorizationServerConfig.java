@@ -26,14 +26,19 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
 	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-		clients.inMemory() //
+		clients.inMemory() // Aplicação WEB frontend
 				.withClient("algafood-web") //
 				.secret(passwordEncoder.encode("a9d9p8.E10")) //
 				.authorizedGrantTypes("password", "refresh_token") //
 				.scopes("write", "read")
 				.accessTokenValiditySeconds(6 * 60 * 60) // 6 Horas (Padrão 12 Horas) dias * horas * minutos * segundos
 				.refreshTokenValiditySeconds(60 * 24 * 60 * 60) // 60 Dias (Padrão 30 Dias) dias * horas * minutos * segundos
-			.and() //
+			.and() // Aplicação integrador backend
+				.withClient("app-integrador") //
+				.secret(passwordEncoder.encode("@app$-integrador")) //
+				.authorizedGrantTypes("client_credentials") //
+				.scopes("write", "read") //
+			.and() // Aplicação do algafood para validar tokens
 				.withClient("checktoken") //
 				.secret(passwordEncoder.encode("checktoken"));
 	}
