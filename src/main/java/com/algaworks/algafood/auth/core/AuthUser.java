@@ -1,6 +1,8 @@
 package com.algaworks.algafood.auth.core;
 
-import java.util.Collections;
+import java.util.Collection;
+
+import org.springframework.security.core.GrantedAuthority;
 
 import com.algaworks.algafood.auth.domain.model.User;
 
@@ -16,8 +18,8 @@ public class AuthUser extends org.springframework.security.core.userdetails.User
 	private Long userId;
 	private String fullName;
 	
-	public AuthUser(User user) {
-		super(user.getEmail(), user.getPassword(), Collections.emptyList());
+	public AuthUser(User user, Collection<? extends GrantedAuthority> authorities) {
+		super(user.getEmail(), user.getPassword(), authorities);
 		
 		this.userId = user.getId();
 		this.fullName = user.getName();

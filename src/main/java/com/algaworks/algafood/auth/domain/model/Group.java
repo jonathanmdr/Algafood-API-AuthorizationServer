@@ -19,26 +19,29 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-@Table(name = "usuario")
-public class User {
-
+@Table(name = "grupo")
+public class Group {
+	
 	@EqualsAndHashCode.Include
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
+	
 	@Column(name = "nome", nullable = false)
 	private String name;
-
-	private String email;
-
-	@Column(name = "senha", nullable = false)
-	private String password;
-
+	
 	@ManyToMany
-	@JoinTable(name = "usuario_grupo", 
-		joinColumns = @JoinColumn(name = "usuario_id"), 
-		inverseJoinColumns = @JoinColumn(name = "grupo_id"))
-	private Set<Group> groups = new HashSet<>();
+	@JoinTable(name = "grupo_permissao", 
+	        joinColumns = @JoinColumn(name = "grupo_id"), 
+	        inverseJoinColumns = @JoinColumn(name = "permissao_id"))
+	private Set<Permission> permissions = new HashSet<>();
+	
+	public boolean disassociatePermission(Permission permission) {
+		return this.getPermissions().remove(permission);
+	}
+	
+	public boolean associatePermission(Permission permission) {
+		return this.getPermissions().add(permission);
+	}
 
 }
