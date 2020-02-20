@@ -45,7 +45,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 				.withClient("algafood-web") //
 				.secret(passwordEncoder.encode("a9d9p8.E10")) //
 				.authorizedGrantTypes("password", "refresh_token") //
-				.scopes("write", "read") //
+				.scopes("WRITE", "READ") //
 				.accessTokenValiditySeconds(6 * 60 * 60) // 6 Horas (Padrão 12 Horas) horas * minutos * segundos
 				.refreshTokenValiditySeconds(60 * 24 * 60 * 60) // 60 Dias (Padrão 30 Dias) dias * horas * minutos * segundos
 			
@@ -53,19 +53,19 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 				.withClient("food-analytics") //
 				.secret(passwordEncoder.encode("")) //
 				.authorizedGrantTypes("authorization_code") //
-				.scopes("write", "read") //
+				.scopes("WRITE", "READ") //
 				.redirectUris("http://localhost:8082") //
 				
 			.and() // Aplicação integrador backend (Client credentials)
 				.withClient("app-integrador") //
 				.secret(passwordEncoder.encode("@app$-integrador")) //
 				.authorizedGrantTypes("client_credentials") //
-				.scopes("write", "read") //
+				.scopes("WRITE", "READ") //
 			
 			.and() // Aplicação acessa como ADMIN (Implicit Grant Type)
 				.withClient("web-admin") //
 				.authorizedGrantTypes("implicit") //
-				.scopes("write", "read") //
+				.scopes("WRITE", "READ") //
 				.redirectUris("http://localhost:8082") //
 				
 			.and() // Aplicação do algafood para validar tokens
