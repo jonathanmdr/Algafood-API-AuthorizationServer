@@ -2,13 +2,14 @@ package com.algaworks.algafood.auth.core;
 
 import java.util.Arrays;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -28,9 +29,6 @@ import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFacto
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
 	@Autowired
-	private PasswordEncoder passwordEncoder;
-
-	@Autowired
 	private AuthenticationManager authenticationManager;
 	
 	@Autowired
@@ -38,39 +36,13 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	
 	@Autowired
 	private JwtKeyStoreProperties jwtKeyStoreProperties;
+	
+	@Autowired
+	private DataSource dataSource;
 
 	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-		clients.inMemory() // Aplicação WEB frontend (Password flow)
-				.withClient("algafood-web") //
-				.secret(passwordEncoder.encode("a9d9p8.E10")) //
-				.authorizedGrantTypes("password", "refresh_token") //
-				.scopes("WRITE", "READ") //
-				.accessTokenValiditySeconds(6 * 60 * 60) // 6 Horas (Padrão 12 Horas) horas * minutos * segundos
-				.refreshTokenValiditySeconds(60 * 24 * 60 * 60) // 60 Dias (Padrão 30 Dias) dias * horas * minutos * segundos
-			
-			.and() // Aplicação de BI (Authorization code)
-				.withClient("food-analytics") //
-				.secret(passwordEncoder.encode("")) //
-				.authorizedGrantTypes("authorization_code") //
-				.scopes("WRITE", "READ") //
-				.redirectUris("http://localhost:8082") //
-				
-			.and() // Aplicação integrador backend (Client credentials)
-				.withClient("app-integrador") //
-				.secret(passwordEncoder.encode("@app$-integrador")) //
-				.authorizedGrantTypes("client_credentials") //
-				.scopes("WRITE", "READ") //
-			
-			.and() // Aplicação acessa como ADMIN (Implicit Grant Type)
-				.withClient("web-admin") //
-				.authorizedGrantTypes("implicit") //
-				.scopes("WRITE", "READ") //
-				.redirectUris("http://localhost:8082") //
-				
-			.and() // Aplicação do algafood para validar tokens
-				.withClient("checktoken") //
-				.secret(passwordEncoder.encode("checktoken"));
+		clients.jdbc(dataSource);
 	}
 
 	@Override
